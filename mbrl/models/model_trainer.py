@@ -82,6 +82,7 @@ class ModelTrainer:
         env=None,
         termination_fn=None,
         coeff=None,
+        rollout_length=None,
     ) -> Tuple[List[float], List[float]]:
         """Trains the model for some number of epochs.
 
@@ -160,7 +161,8 @@ class ModelTrainer:
                 batch_callback_epoch = None
             batch_losses: List[float] = []
             for batch in tqdm.tqdm(dataset_train, disable=disable_tqdm):
-                loss, meta = self.model.update(batch, self.optimizer, agent=agent, env=env, termination_fn=termination_fn, coeff=coeff)
+                loss, meta = self.model.update(batch, self.optimizer, agent=agent, env=env,
+                                               termination_fn=termination_fn, coeff=coeff, rollout_length=rollout_length)
                 batch_losses.append(loss)
                 if batch_callback_epoch:
                     batch_callback_epoch(loss, meta, "train")

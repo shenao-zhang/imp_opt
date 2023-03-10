@@ -130,7 +130,7 @@ class Model(nn.Module, abc.ABC):
         model_in: ModelInput,
         optimizer: torch.optim.Optimizer,
         target: Optional[torch.Tensor] = None,
-        agent=None, env=None, termination_fn=None, coeff=None,
+        agent=None, env=None, termination_fn=None, coeff=None, rollout_length=None,
     ) -> Tuple[float, Dict[str, Any]]:
         """Updates the model using backpropagation with given input and target tensors.
 

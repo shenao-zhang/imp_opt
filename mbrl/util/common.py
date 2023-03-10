@@ -370,6 +370,7 @@ def train_model_and_save_model_and_data(
     env=None,
     termination_fn=None,
     coeff=None,
+    rollout_length=None,
 ):
     """Convenience function for training a model and saving results.
 
@@ -415,6 +416,7 @@ def train_model_and_save_model_and_data(
         env=env,
         termination_fn=termination_fn,
         coeff=coeff,
+        rollout_length=rollout_length,
     )
     if work_dir is not None:
         model.save(str(work_dir))

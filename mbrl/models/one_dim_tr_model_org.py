@@ -191,7 +191,7 @@ class OneDTransitionRewardModel(Model):
         batch: mbrl.types.TransitionBatch,
         optimizer: torch.optim.Optimizer,
         target: Optional[torch.Tensor] = None,
-        agent=None, env=None, termination_fn=None, coeff=None,
+        agent=None, env=None, termination_fn=None, coeff=None, rollout_length=None
     ) -> Tuple[torch.Tensor, Dict[str, Any]]:
         """Updates the model given a batch of transitions and an optimizer.
 

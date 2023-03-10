@@ -191,7 +191,7 @@ class OneDTransitionRewardModel(Model):
         batch: mbrl.types.TransitionBatch,
         optimizer: torch.optim.Optimizer,
         target: Optional[torch.Tensor] = None,
-        agent=None, env=None, termination_fn=None, coeff=None,
+        agent=None, env=None, termination_fn=None, coeff=None, rollout_length=None,
     ) -> Tuple[torch.Tensor, Dict[str, Any]]:
         """Updates the model given a batch of transitions and an optimizer.
 
@@ -215,7 +215,8 @@ class OneDTransitionRewardModel(Model):
         obs = env.reset()
         obs = torch.from_numpy(obs).cpu().float()
         done = False
-        while not done:
+      #  while not done:
+        for i in range(rollout_length):
             actions = agent.act_dummy(obs.cpu().float())
             #with torch.no_grad():
             (
@@ -229,7 +230,7 @@ class OneDTransitionRewardModel(Model):
                 deterministic=False,
             )
             with torch.no_grad():
-                done = termination_fn(actions, next_observs)
+              #  done = termination_fn(actions, next_observs)
                 obs, reward = next_observs.detach(), pred_rewards.detach()
                 reward_history.append(reward)
             log_probs.append(log_p)

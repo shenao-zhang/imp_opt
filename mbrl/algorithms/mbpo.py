@@ -276,6 +276,7 @@ def train(
                     env=dummy_env,
                     termination_fn=termination_fn,
                     coeff=coeff,
+                    rollout_length=rollout_length,
                 )
 
                 # NEW!
