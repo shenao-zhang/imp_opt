@@ -86,15 +86,11 @@ def evaluate(
     env: gym.Env,
     agent: SACAgent,
     num_episodes: int,
-    video_recorder: VideoRecorder,
-    model_env, termination_fn
-):
-    import copy
+    video_recorder: VideoRecorder
+    ):
     avg_episode_reward = 0.0
-    avg_model_rew = 0.0
     for episode in range(num_episodes):
         obs = env.reset()
-        obs_copy = copy.deepcopy(obs)
         video_recorder.init(enabled=(episode == 0))
         done = False
         episode_reward = 0.0
@@ -107,10 +103,37 @@ def evaluate(
             episode_reward += reward
         avg_episode_reward += episode_reward
 
+    return avg_episode_reward / num_episodes
+
+
+def evaluate_model(
+    env: gym.Env,
+    agent: SACAgent,
+    num_episodes: int,
+    video_recorder: VideoRecorder,
+    model_env, termination_fn, rollout_length
+):
+    import copy
+    avg_episode_reward = 0.0
+    avg_model_rew = 0.0
+    for episode in range(5):
+        obs = env.reset()
+        obs_copy = copy.deepcopy(obs)
+        video_recorder.init(enabled=(episode == 0))
+        done = False
+        episode_reward = 0.0
+        #while not done:
+        for i in range(rollout_length):
+            action = agent.act(obs)
+            obs, reward, done, _ = env.step(action)
+            video_recorder.record(env)
+            episode_reward += reward
+        avg_episode_reward += episode_reward
+
         with torch.no_grad():
             obs = torch.from_numpy(obs_copy).cpu().float()
             done = False
-            for epi in range(epi_len):
+            for j in range(rollout_length):
             #while not done:
                 actions = agent.act_dummy(obs.cpu().float())  # numpy action
              #   pred_next_obs, pred_rewards, pred_dones, model_state = model_env.step(
@@ -324,10 +347,14 @@ def train(
                 #avg_reward = evaluate(
                 #    test_env, agent, cfg.algorithm.num_eval_episodes, video_recorder
                 #)
-                avg_reward, model_value = evaluate(
+                avg_reward = evaluate(
                     test_env, agent, cfg.algorithm.num_eval_episodes, video_recorder, model_env, termination_fn
                 )
-                print("Compare: ", avg_reward, model_value)
+                real_value, model_value = evaluate_model(
+                    test_env, agent, cfg.algorithm.num_eval_episodes, video_recorder, model_env,
+                    termination_fn, rollout_length
+                )
+                print("Compare: ", real_value, model_value)
 
                 logger.log_data(
                     mbrl.constants.RESULTS_LOG_NAME,
