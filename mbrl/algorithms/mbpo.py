@@ -348,7 +348,7 @@ def train(
                 #    test_env, agent, cfg.algorithm.num_eval_episodes, video_recorder
                 #)
                 avg_reward = evaluate(
-                    test_env, agent, cfg.algorithm.num_eval_episodes, video_recorder, model_env, termination_fn
+                    test_env, agent, cfg.algorithm.num_eval_episodes, video_recorder
                 )
                 real_value, model_value = evaluate_model(
                     test_env, agent, cfg.algorithm.num_eval_episodes, video_recorder, model_env,
